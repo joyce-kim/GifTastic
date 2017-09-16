@@ -11,7 +11,7 @@
 	<!-- form for user to add animals -->
 	<form id="add-form">
 		Add Animal:<br>
-		<input type="text" name="animal-input">
+		<input type="text" id="animal-input">
 		<input type="submit" value="Submit">
 	</form>
 
@@ -26,30 +26,31 @@
 		var toggle = false;
 
 		//takes dataSet and loops through to make buttons of each item
-		function makeButtons() {	
-			for (var i = 0; i < animals.length; i++) {
-		        var animalBtn = $("<button>");
-		        animalBtn.attr("data-animal", animals[i]);
-		        animalBtn.text(animals[i]);
-		        $("#buttons").append(animalBtn);
-		    };
+		function makeButton(animal) {	
+	        var animalBtn = $("<button>");
+	        animalBtn.attr("data-animal", animal);
+	        animalBtn.text(animal);
+	        $("#buttons").append(animalBtn);
 		};
-		makeButtons();
+		
+		for (var i = 0; i < animals.length; i++) {
+			makeButton(animals[i]);
+		};
 
 		//takes user input and adds to the array which is looped over to create the buttons
-		// $("#add-form").on("submit", function() {
-		// 	var input = $("#animal-input").val();
-		// 	console.log(input);
-		// 	animals.push(input);
-			// makeButtons();
-		// });
+		$("#add-form").on("submit", function() {
+			event.preventDefault();
+			var input = $("#animal-input").val();
+			animals.push(input);
+			makeButton(input);
+		});
 
 		$("button").on("click", function() {
-
 			var animal = $(this).attr("data-animal");
 			var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
 				animal + "&api_key=dc6zaTOxFJmzC&limit=10";
 
+			console.log(animal);
 			$.ajax({
 				url: queryURL,
 				method: "GET"
@@ -66,6 +67,8 @@
 					var animalImage = $("<img>");
 					animalImage.attr("src", results[i].images.fixed_height_still.url);
 
+					animalImage.attr("id", i);
+
 					gifDiv.prepend(p);
 					gifDiv.prepend(animalImage);
 
@@ -74,49 +77,19 @@
 			});
 		});
 
-		$(".item").on("click", function() { console.log("click worked"); });
+		$(document).on("click", ".item", function() {
+			if (toggle === false) {
+				toggle = true;
+				var thisIndex = $(this).find("img").attr("id");
+				console.log("ON: " + thisIndex);
+			} else {
+				toggle = true;
+				console.log("OFF: " + $(this).attr("src"));
+			};
+		});
 
-		// $("img").on("click", function() {
-		// 	console.log("img clicked dude");
-		// 	if (toggle === false) {
-		// 		toggle = true;
-		// 		console.log("TURNED TOGGLE ON");
-		// 		for (var i = 0; i < results.length; i++) {
-		// 			var gifDiv = $("<div class='item'>");
-
-		// 			var rating = results[i].rating;
-
-		// 			var p = $("<p>").text("Rating: " + rating);
-
-		// 			var animalImage = $("<img>");
-		// 			animalImage.attr("src", results[i].images.fixed_height.url);
-
-		// 			gifDiv.prepend(p);
-		// 			gifDiv.prepend(animalImage);
-
-		// 			$("#populateHere").prepend(gifDiv);
-		// 		};
-		// 	} else {
-		// 		toggle = false;
-		// 		console.log("TURNED TOGGLE OFF");
-		// 		for (var i = 0; i < results.length; i++) {
-		// 			var gifDiv = $("<div class='item'>");
-
-		// 			var rating = results[i].rating;
-
-		// 			var p = $("<p>").text("Rating: " + rating);
-
-		// 			var animalImage = $("<img>");
-		// 			animalImage.attr("src", results[i].images.fixed_height_still.url);
-
-		// 			gifDiv.prepend(p);
-		// 			gifDiv.prepend(animalImage);
-
-		// 			$("#populateHere").prepend(gifDiv);
-		// 		};
-		// 	};
-		// });
-		
+//on click, need to get src of the item and switch to fixed_height
+//do this by accessing results[i].images.fixed_height.url BUT how do i get results[i] without looping through	
 
 	</script>
 </body>
