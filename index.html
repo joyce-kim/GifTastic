@@ -43,14 +43,14 @@
 			var input = $("#animal-input").val();
 			animals.push(input);
 			makeButton(input);
+			$("#animal-input").val("");
 		});
 
-		$("button").on("click", function() {
+		$(document).on("click", "button", function() {
 			var animal = $(this).attr("data-animal");
 			var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
 				animal + "&api_key=dc6zaTOxFJmzC&limit=10";
 
-			console.log(animal);
 			$.ajax({
 				url: queryURL,
 				method: "GET"
